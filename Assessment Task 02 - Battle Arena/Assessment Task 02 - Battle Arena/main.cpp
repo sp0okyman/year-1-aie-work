@@ -9,6 +9,29 @@ void clear_console_buffer()
 	std::cin.ignore(std::cin.rdbuf()->in_avail());
 }
 
+void swap(soldier *a_first_variable, soldier *a_second_variable)
+{
+	soldier temp = *a_first_variable;
+	*a_first_variable = *a_second_variable;
+	*a_second_variable = temp;
+}
+
+void bubble_sort(soldier *a_team[], int a_team_size) 
+{
+	int index_one, index_two;
+	// 
+	for (index_one = 0; index_one < a_team_size - 1; ++index_one)
+	{
+		for (index_two = 0; index_two < a_team_size - index_one - 1; ++index_two)
+		{
+			if( a_team[index_two]->get_health() > a_team[index_two + 1 ]->get_health() )
+			{
+				swap(a_team[index_two], a_team[index_two + 1]);
+			}
+		}
+	}
+}
+
 void fight(soldier a_team_one[], soldier a_team_two[], int a_team_size);
 
 int main() 
@@ -63,7 +86,8 @@ void fight(soldier a_team_one[], soldier a_team_two[], int a_team_size)
 		// team one attacks a random target in team two
 		a_team_one[index].attack_target(a_team_two[target_one]);
 		std::cout << a_team_one[index].get_name() << " attacks " << target_one << '\n';
-		std::cout << target_one << " receives " << a_team_one[index].get_attack_value() << " points of damage";
+		std::cout << target_one << " receives " << a_team_one[index].get_randomized_damage() << " points of damage";
+		std::cout << a_team_two[target_one].get_name() << " has " << a_team_two[target_one].get_health() << " health left\n";
 		// check if health of target is less than or equal to 0, set is_alive to false if true
 		if (a_team_two[target_one].get_health() <= 0)
 		{
@@ -73,7 +97,8 @@ void fight(soldier a_team_one[], soldier a_team_two[], int a_team_size)
 		// team two attacks a random target in team one
 		a_team_two[index].attack_target(a_team_one[target_two]);
 		std::cout << a_team_two[index].get_name() << " attacks " << a_team_one[target_two].get_name() << '\n';
-		std::cout << a_team_one[target_two].get_name() << " receives " << a_team_two[index].get_attack_value() << " points of damage";
+		std::cout << a_team_one[target_two].get_name() << " receives " << a_team_two[index].get_randomized_damage() << " points of damage";
+		std::cout << a_team_one[target_two].get_name() << " has " << a_team_one[target_two].get_health() << " health left\n";
 		// check if health of target is less than or equal to 0, set is_alive to false if true
 		if (a_team_one[target_two].get_health() <= 0)
 		{

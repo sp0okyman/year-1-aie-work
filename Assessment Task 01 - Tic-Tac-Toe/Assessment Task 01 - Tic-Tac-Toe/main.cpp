@@ -3,8 +3,8 @@
 // creating function to check for the win conditions
 bool win_condition_met(int** a_array, int a_array_length)
 {
-	bool is_win = false;
 
+	bool is_win = false;
 	// win condition check for row
 	for (int row = 0; row < a_array_length; ++row)
 	{
@@ -37,13 +37,15 @@ bool win_condition_met(int** a_array, int a_array_length)
 	else { return false; }
 }
 
+
+// checks board for any unplayed location on the board
 bool board_full_check(int** a_array, int a_array_length)
 {
 	for (int row = 0; row < a_array_length; ++row)
 	{
 		for (int column = 0; column < a_array_length; ++column)
 		{
-			if (a_array[row][column] != 1 || a_array[row][column] != 2)
+			if (a_array[row][column] != 1 && a_array[row][column] != 2)
 				return false;
 		}
 	}
@@ -137,12 +139,18 @@ int main()
 
 		if (win_condition_met(pointer_board, array_length) == true)
 		{
+			std::cout << "The brainlet test is over.\n";
+			std::cout << "Player " << player_input << " has won. Cheeky bastard.\n";
+			break;
+		}
+
+		if (board_full_check(pointer_board, array_length) == true) {
+			std::cout << "Draw!" << std::endl;
 			break;
 		}
 	}
 
-	std::cout << "The brainlet test is over.\n";
-	std::cout << "Player " << player_input << " has won. Cheeky bastard.\n";
+
 
 	system("pause");
 
