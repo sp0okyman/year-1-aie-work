@@ -5,11 +5,6 @@
 
 const int enum_length = 3;
 
-void overwrite_with() 
-{
-	
-}
-
 // Automatically called on instantiation.
 soldier::soldier()
 {
@@ -19,14 +14,27 @@ soldier::soldier()
 	m_max_attack = m_attack + 1;
 	m_specialization = (specialization)(rand() % enum_length);
 	m_if_alive = true;
+	m_name = "";
 }
 
+void soldier::overwrite_with(soldier a_soldier)
+{
+	m_randomized_damage = a_soldier.get_randomized_damage();
+	m_min_attack = a_soldier.get_min_attack();
+	m_max_attack = a_soldier.get_max_attack();
+	m_attack = a_soldier.get_attack_value();
+	m_health = a_soldier.get_health();
+	m_name = a_soldier.get_name();
+}
 
 soldier::soldier(std::string a_name)
 {
-	m_health = rand() % 15 + 1;
-	m_attack = rand() % 3 + 1;
+	m_health = rand() % 20 + 10;
+	m_attack = rand() % 5 + 3;
+	m_min_attack = m_attack - 1;
+	m_max_attack = m_attack + 1;
 	m_specialization = (specialization)(rand() % enum_length);
+	m_if_alive = true;
 	m_name = a_name;
 }
 
@@ -64,6 +72,7 @@ void soldier::take_damage(const int a_damage)
 
 void soldier::attack(soldier& a_squad) const { a_squad.take_damage(m_attack); }
 
+// target will receive randomized damage between a min and max
 void soldier::attack_target(soldier& a_target)
 {
 	m_randomized_damage = rand() % (m_max_attack - m_min_attack) + m_min_attack;

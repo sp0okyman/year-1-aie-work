@@ -15,6 +15,8 @@ public:
 
 	~soldier();
 
+	void overwrite_with(soldier a_soldier);
+
 	const int get_health() const;
 	const int get_attack_value() const;
 	const int get_min_attack() const;
