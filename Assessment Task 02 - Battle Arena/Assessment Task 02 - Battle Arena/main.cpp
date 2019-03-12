@@ -12,45 +12,49 @@ void clear_console_buffer()
 // make a temp variable, copy first variable into it, then 
 // copy second variable over first variable, then copy temp
 // (which stored the first variable) over the second variable
-void swap(soldier &a_first_variable, soldier &a_second_variable)
-{
-	soldier temp = a_first_variable;
-	a_first_variable = a_second_variable;
-	a_second_variable = temp;
-	//temp.overwrite_with( a_first_variable );
-	//a_first_variable.overwrite_with( a_second_variable );
-	//a_second_variable.overwrite_with( temp );
-}
+//void swap(soldier* a_first_variable, soldier* a_second_variable)
+//{
+//	soldier* temp = a_first_variable;
+//	a_first_variable = a_second_variable;
+//	a_second_variable = temp;
+//	temp.overwrite_with( a_first_variable );
+//	a_first_variable.overwrite_with( a_second_variable );
+//	a_second_variable.overwrite_with( temp );
+//}
 
 // check if member of an a_team has more health, refer to swap if true
-int bubble_sort(soldier a_team[], int a_team_size) 
+int bubble_sort(soldier* a_team[], int a_team_size) 
 {
-	int index_one, index_two, index_three;
 	bool swapped = true;
 	while (swapped) 
 	{
 		swapped = false;
-		for (index_one = 0; index_one < a_team_size - 1; ++index_one)
+		for (int index = 0; index < a_team_size - 1; ++index)
 		{
-			if (a_team[index_one].get_health() > a_team[index_one + 1].get_health())
+			if (a_team[index]->get_health() < a_team[index + 1]->get_health())
 			{
-				swap(a_team[index_one], a_team[index_one + 1]);
+				soldier* temp = a_team[index];
+				a_team[index] = a_team[index + 1];
+				a_team[index + 1] = temp;
+
 				swapped = true;
 			}
 		}
 	}
-	/*for (index_three = 0; index_three < a_team_size; ++index_three)
+	for (int index = 0; index < a_team_size; ++index)
 	{
-		if (a_team[index_three].get_health() == 0)
+		if (a_team[index]->get_health() == 0)
 		{
-			return index_three - 1;
+			return index - 1;
 		}
-	}*/
+	}
 	return a_team_size;
 }
 
 // declaring fight function
-void fight(soldier a_team_one[], soldier a_team_two[], int a_team_size);
+void fight(soldier* a_team_one[], soldier* a_team_two[], int a_team_size);
+// declaring attacker function
+void attacking(soldier* a_attacker, soldier* a_target, int a_team_size);
 
 int main() 
 {
@@ -58,13 +62,13 @@ int main()
 	srand(time(0));
 
 	// no heathen magic numbers in the presence of RNGesus
-	const int squad_size = 5;
+	const int squad_size = 2;
 	// to store user-input for entering names for soldiers
 	std::string name_buffer;
 
 	// makin' two arrays of soldiers, calling them soldier_squad
-	soldier soldier_squad_a[squad_size];
-	soldier soldier_squad_b[squad_size];
+	soldier* soldier_squad_a[squad_size];
+	soldier* soldier_squad_b[squad_size];
 
 	// needlessly large game loop that definitely needs a lot of clean-up
 	for ( int index = 0; index < squad_size; ++index )
@@ -72,12 +76,12 @@ int main()
 		std::cout << "Please enter a name for soldier number " << index << " for team 1\n";
 		std::cin >> name_buffer;
 		clear_console_buffer();
-		soldier_squad_a[index] = soldier(name_buffer);
+		soldier_squad_a[index] = new soldier(name_buffer);
 
 		std::cout << "Please enter a name for soldier number " << index << " for team 2\n";
 		std::cin >> name_buffer;
 		clear_console_buffer();
-		soldier_squad_b[index] = soldier(name_buffer);
+		soldier_squad_b[index] = new soldier(name_buffer);
 	}
 
 	int round_counter = 0;
@@ -95,12 +99,12 @@ int main()
 		if (bubble_sort(soldier_squad_a, squad_size) == -1)
 		{
 			more_than_one = false;
-			std::cout << "First Squad is vanquished\n";
+			std::cout << "First Squad has been defeated\n";
 		}
 		else if (bubble_sort(soldier_squad_b, squad_size) == -1)
 		{
 			more_than_one = false;
-			std::cout << "Second Squad is vanquished\n";
+			std::cout << "Second Squad has been defeated\n";
 		}
 	}
 
@@ -109,7 +113,8 @@ int main()
 	return 0;
 }
 
-void fight(soldier a_team_one[], soldier a_team_two[], int a_team_size)
+// defining fight function
+void fight(soldier* a_team_one[], soldier* a_team_two[], int a_team_size)
 {
 	int target_one = 0;
 	int target_two = 0;
@@ -118,41 +123,58 @@ void fight(soldier a_team_one[], soldier a_team_two[], int a_team_size)
 
 	for (int index = 0; index < a_team_size; ++index)
 	{
+		int team_one_survivor_count = bubble_sort(a_team_one, a_team_size);
+		int team_two_survivor_count = bubble_sort(a_team_two, a_team_size);
+
 		// randomly select a number from a_team_size, minus
 		// the currently "dead" members of opposing team
-		if (bubble_sort(a_team_two, a_team_size) > 0)
+
+		if (team_one_survivor_count > 0)
 		{
-			target_one = rand() % bubble_sort(a_team_two, a_team_size);
+			target_one = rand() % team_two_survivor_count;
 		}
 		else { target_one = 0; }
-		
-		if (bubble_sort(a_team_one, a_team_size) > 0)
+
+		if (team_two_survivor_count > 0)
 		{
-			target_two = rand() % bubble_sort(a_team_one, a_team_size);
+			target_two = rand() % team_one_survivor_count;
 		}
 		else { target_two = 0; }
+		
+		attacking(a_team_one[index], a_team_two[target_one], a_team_size);
+		attacking(a_team_two[index], a_team_one[target_two], a_team_size);
 
-		// team one attacks a random target in team two
-		a_team_one[index].attack_target(a_team_two[target_one]);
-		std::cout << a_team_one[index].get_name() << " attacks " << a_team_two[target_one].get_name() << '\n';
-		std::cout << a_team_two[target_one].get_name() << " receives " << a_team_one[index].get_randomized_damage() << " points of damage\n";
-		std::cout << a_team_two[target_one].get_name() << " has " << a_team_two[target_one].get_health() << " health left\n";
-		// check if health of target is less than or equal to 0, set is_alive to false if true
-		if (a_team_two[target_one].get_health() <= 0)
+		team_one_survivor_count = bubble_sort(a_team_one, a_team_size);
+		team_two_survivor_count = bubble_sort(a_team_two, a_team_size);
+
+		// Win condition check...
+		if (team_one_survivor_count == -1)
 		{
-			a_team_two[target_one].set_alive_status(false);
-			std::cout << a_team_two[target_one].get_name() << " is dead!\n";
+			return;
 		}
-		// team two attacks a random target in team one
-		a_team_two[index].attack_target(a_team_one[target_two]);
-		std::cout << a_team_two[index].get_name() << " attacks " << a_team_one[target_two].get_name() << '\n';
-		std::cout << a_team_one[target_two].get_name() << " receives " << a_team_two[index].get_randomized_damage() << " points of damage\n";
-		std::cout << a_team_one[target_two].get_name() << " has " << a_team_one[target_two].get_health() << " health left\n";
-		// check if health of target is less than or equal to 0, set is_alive to false if true
-		if (a_team_one[target_two].get_health() <= 0)
+
+		if (team_two_survivor_count == -1)
 		{
-			a_team_one[target_two].set_alive_status(false);
-			std::cout << a_team_one[target_two].get_name() << " is dead!\n";
+			return;
+		}
+
+	}
+}
+
+void attacking(soldier* a_attacker, soldier* a_target, int a_team_size)
+{
+	if (a_attacker->get_alive_status() == true)
+	{
+		a_attacker->attack_target(*a_target);
+		// team two attacks a random target in team one
+		std::cout << a_attacker->get_name() << " attacks " << a_target->get_name() << '\n';
+		std::cout << a_target->get_name() << " receives " << a_target->get_randomized_damage() << " points of damage\n";
+		std::cout << a_target->get_name() << " has " << a_target->get_health() << " health left\n";
+		// check if health of target is less than or equal to 0, set alive_status to false if true
+		if (a_target->get_health() <= 0)
+		{
+			a_target->set_alive_status(false);
+			std::cout << a_target->get_name() << " is dead!\n";
 		}
 	}
 }

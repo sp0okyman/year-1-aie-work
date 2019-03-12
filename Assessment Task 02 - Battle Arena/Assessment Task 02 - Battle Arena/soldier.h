@@ -44,7 +44,7 @@ private:
 	int m_min_attack = 0;
 	int m_max_attack = 0;
 	int m_randomized_damage = 0;
-	bool m_if_alive = true;
+	bool m_alive_status = true;
 	specialization m_specialization;
 
 	std::string m_name;
