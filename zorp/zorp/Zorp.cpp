@@ -1,5 +1,7 @@
 #include "pch.h"
 #include <iostream>
+#include <random>
+#include <time.h>
 
 using namespace std;
 
@@ -35,6 +37,19 @@ int main()
 
 	//2d array
 	int rooms[MAZE_HEIGHT][MAZE_WIDTH];
+
+	srand(time(nullptr));
+
+	for (int y = 0; y < MAZE_HEIGHT; y++)
+	{
+		for (int x = 0; x < MAZE_WIDTH; x++)
+		{
+			rooms[y][x] = rand() % MAX_RANDOM_TYPE;
+		}
+	}
+
+	rooms[0][0] = ENTRANCE;
+	rooms[MAZE_HEIGHT - 1][MAZE_WIDTH - 1] = EXIT;
 
 	int height = 0;
 	int avatar_hp = 0;
