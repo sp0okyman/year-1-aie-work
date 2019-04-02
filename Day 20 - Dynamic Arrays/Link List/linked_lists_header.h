@@ -18,7 +18,7 @@ public:
 };
 
 template<typename t_template>
-class linked_list 
+class linked_list
 {
 public:
 	// make pointers of node class of generic variable (template) called m_start and m_end
@@ -36,6 +36,8 @@ public:
 		m_start->m_next = m_end;
 		// m_end's new node that was assigned to it, it's m_previous now points to m_start's node
 		m_end->m_previous = m_start;
+		
+		std::cout << "Constructor called.\n";
 	}
 	// destructor
 	~linked_list()
@@ -63,9 +65,11 @@ public:
 		delete m_end;
 		// m_end no longer points to a node
 		m_end = nullptr;
+
+		std::cout << "Destructor called.\n";
 	}
 	// function to add a new node at the start of the linked_list chain
-	void push_front(t_template& a_data)
+	void push_front(const t_template& a_data)
 	{
 		// create a new pointer called current and point it towards a new node
 		node<t_template>* current = new node<t_template>();
@@ -79,18 +83,135 @@ public:
 		m_start->m_next = current;
 		// the current node's m_next pointer which is pointing to another node's m_previous pointer is now pointing to current's node
 		current->m_next->m_previous = current;
+
+		std::cout << "Push Front called.\n";
 	}
 
-	void push(const t_template& a_data)
+	void push_back(const t_template& a_data)
 	{
 		// create a new pointer called current and point it towards a new node
 		node<t_template>* current = new node<t_template>();
 		// the node that current points to's data is assigned to what a_data is
 		current->m_data = a_data;
-		// the current node's m_next pointer is pointing to the m_end's pointer's node
-		current->m_next = m_end;
-		// the current node's m_previous pointer is pointing to 
+		// the current node's m_previous pointer is pointing to m_end's m_previous pointer
 		current->m_previous = m_end->m_previous;
+		// the current node's m_nex pointer is pointing to the node m_end is pointing to
+		current->m_next = m_end;
+		// the m_end's m_previous pointer is pointing to the current node
+		m_end->m_previous = current;
+		// the m_end's m_previous' m_next pointer is now pointing to the current node
+		current->m_previous->m_next = current;
+
+		std::cout << "Push Back called.\n";
+	}
+
+	void insert(int a_iterator, t_template& a_data)
+	{
+		node<t_template>* current = m_start->m_next;
+		int count = 0;
+
+		while (count != a_iterator)
+		{
+			current = current->m_next;
+			++count;
+		}
+		node<t_template>* node_pointer = new node<t_template>();
+		node_pointer->m_data = a_data;
+		node_pointer->m_previous = current;
+		node_pointer->m_previous->m_next = node_pointer;
+		node_pointer->m_next = current->m_next;
+		node_pointer->m_next->m_previous = current;
+
+		std::cout << "Insert called.\n";
+	}
+
+	int count()
+	{
+		node<t_template>* current = m_start->m_next;
+		int m_count = 0;
+
+		while (m_count != m_end)
+		{
+			current = current->m_next;
+			++m_count;
+		}
+		return m_count;
+		std::cout << "Count called. Count is at " << m_count << ".\n";
+	}
+
+	void erase(int a_iterator)
+	{
+		node<t_template>* current = m_start->m_next;
+		int count = 0;
+
+		while (count != a_iterator)
+		{
+			current = current->m_next;
+			++count;
+		}
+
+		if (count == a_iterator)
+		{
+			current->m_previous->m_next = current->m_next;
+			current->m_next->m_previous = current->m_previous;
+			delete current;
+		}
+		std::cout << "Erase called.\n";
+	}
+
+	void remove(t_template a_value)
+	{
+		node<t_template>* current = m_start->m_next;
+
+		while (current != m_end)
+		{
+			if (current->m_data == a_value) 
+			{
+				current->m_previous->m_next = current->m_next;
+				current->m_next->m_previous = current->m_previous;
+				node<t_template>* temp_pointer = current;
+				current = current->m_next;
+				delete temp_pointer;
+			}
+			else 
+			{
+				current = current->m_next;
+			}
+		}
+	}
+
+	void pop_front()
+	{
+		node<t_template>* temp_pointer;
+
+		temp_pointer = m_start->m_next;
+		m_start->m_next = temp_pointer->m_next;
+		m_start->m_next->m_previous = m_start;
+		delete temp_pointer;
+	}
+
+	void pop_back()
+	{
+		node<t_template>* temp_pointer;
+
+		temp_pointer = m_end->m_previous;
+		m_end->m_previous = temp_pointer->m_previous;
+		m_end->m_previous->m_next = m_end;
+		delete temp_pointer;
+	}
+
+	node<t_template> begin()
+	{
+		if (m_start->m_next != m_end)
+		{
+			return m_start->m_next;
+		}
+		else { return NULL; }
+	}
+
+	node<t_template> end()
+	{
+		return m_end->m_previous;
 	}
 };
 #endif

@@ -35,7 +35,7 @@ public:
 	}
 
 	// adds a value to the array, but...
-	void push(t_template a_input)
+	void push_back(t_template a_input)
 	{
 		// if the count is equal to the current capacity...
 		if (m_count == m_capacity)
