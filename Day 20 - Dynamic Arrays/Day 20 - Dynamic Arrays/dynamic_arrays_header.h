@@ -16,14 +16,15 @@ public:
 		m_count = 0;
 		m_capacity = m_default_capacity;
 	}
+
 	// copy constructor that copies values
-	Dynamic_Array(Dynamic_Array& input_array)
+	Dynamic_Array(Dynamic_Array& a_input_array)
 	{
-		m_array = new t_template[input_array.m_capacity];
+		m_array = new t_template[a_input_array.m_capacity];
 		
-		for (size_t index = 0; index < input_array.m_capacity; ++index)
+		for (size_t index = 0; index < a_input_array.m_capacity; ++index)
 		{
-			m_array[index] = input_array[index];
+			m_array[index] = a_input_array[index];
 		}
 	}
 
@@ -32,6 +33,29 @@ public:
 	{
 		delete[] m_array;
 		m_array = nullptr;
+	}
+
+	// assignment operator
+	Dynamic_Array& operator= (Dynamic_Array& a_input_array)
+	{
+		if (a_input_array == this)
+		{
+			return *this;
+		}
+		if (m_array)
+		{
+			delete[] m_array;
+			m_array = nullptr;
+		}
+		m_count = a_input_array.m_count;
+		m_capacity = a_input_array.m_capacity;
+
+		m_array = new t_template[a_input_array.m_capacity];
+
+		for (size_t index = 0; index < a_input_array.m_capacity; ++index)
+		{
+			m_array[index] = a_input_array[index];
+		}
 	}
 
 	// adds a value to the array, but...
@@ -61,38 +85,28 @@ public:
 	}
 
 	// function to place a new value somewhere in the middle of the array
-	void insert(t_template a_input, int a_location)
-	{
-		// same check as above to increase the size of the array if there's too little space...
-		if (m_count == m_capacity)
-		{
-			m_capacity *= 2;
-			t_template* m_new_array = new t_template[m_capacity];
-
-			for (int index; index < m_count; ++index)
-			{
-				m_new_array[index] = m_array[index];
-			}
-			delete[] m_array;
-			m_array = m_new_array;
-		}
-		// start at the current count of the array (the last value of the array)...
-		for (int index = m_count; index > a_location; --index )
-		{
-			// ...shift every variable over by one (towards the current count) to make space for the new variable
-			m_array[index - 1] = m_array[];
-		}
-		// slap that shit in (a_input @ a_location)
-		m_array[a_location] = a_input;
-		++m_count;
-
-	}
+//void insert(t_template a_input, int a_location)
+//{
+//	grow();
+//
+//	// start at the current count of the array (the last value of the array)...
+//	for (int index = m_count; index > a_location; --index )
+//	{
+//		// ...shift every variable over by one (towards the current count) to make space for the new variable
+//		m_array[index - 1] = m_array[];
+//	}
+//	// slap that shit in (a_input @ a_location)
+//	m_array[a_location] = a_input;
+//
+//	++m_count;
+//}
 
 	// decrement count to haphazzardly """"""remove"""""" the last value (it's still there though)
-	void pop()
+	void pop_back()
 	{
 		--m_count;
 	}
+
 	// doubles array capacity
 	void grow()
 	{
@@ -114,20 +128,38 @@ public:
 		}
 	}
 
-	// 1 or more elements of type t_template
 	void insert(const t_template& a_data, size_t a_index)
 	{
-		if (m_count == m_capacity) 
-		{
-			grow();
-		}
-
+		grow();
+		 
 		for (size_t i = m_count - 1; i >= a_index ; i++)
 		{
 			m_data[i + 1] = m_data[i];
 		}
 
 		m_data[a_index];
+
+		++m_count; 
+	}
+
+	// overloaded function of insert
+	// 1 or more elements of type t_template
+	void insert(const t_template& a_data[], size_t a_index, size_t& a_element_count)
+	{
+		grow();
+
+		for (size_t i = m_count - 1; i >= a_index; i++)
+		{
+			m_data[i + 1] = m_data[i];
+		}
+		    
+		m_data[a_index];
+
+	}
+
+	void remove(const t_template& a_data[], size_t a_index)
+	{
+
 	}
 
 private:
@@ -137,6 +169,5 @@ private:
 	const int m_default_capacity = 8;
 	int* m_array;
 };
-
 
 #endif

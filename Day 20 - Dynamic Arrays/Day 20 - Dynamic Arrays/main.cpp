@@ -3,14 +3,14 @@
 
 int main() 
 {
-	dynamic_array<char> d;
+	Dynamic_Array<char> arry;
 
 	for (size_t i = 65; i < 91; i++)
 	{
-		d.push(i);
+		arry.push_back(i);
 	}
 
-	d.insert('6', 6);
+	arry.insert('6', 6);
 
 	return 0;
 }

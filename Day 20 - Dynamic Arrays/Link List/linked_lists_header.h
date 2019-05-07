@@ -105,7 +105,7 @@ public:
 		std::cout << "Push Back called.\n";
 	}
 
-	void insert(int a_iterator, t_template& a_data)
+	void insert(int a_iterator, const t_template& a_data)
 	{
 		node<t_template>* current = m_start->m_next;
 		int count = 0;
@@ -130,7 +130,7 @@ public:
 		node<t_template>* current = m_start->m_next;
 		int m_count = 0;
 
-		while (m_count != m_end)
+		while (current != m_end)
 		{
 			current = current->m_next;
 			++m_count;
@@ -200,7 +200,26 @@ public:
 		delete temp_pointer;
 	}
 
-	node<t_template> begin()
+	bool empty()
+	{	
+		return (m_start->m_next == m_end || m_end->m_previous == m_start);
+	}
+
+	void clear()
+	{
+		node<t_template>* m_current = m_start->m_next;
+		while (m_current != m_end)
+		{
+			node<t_template>* next = m_current->m_next;
+			delete m_current;
+			m_current = nullptr;
+			m_current = next;
+		}
+		m_start->m_next = m_end;
+		m_end->m_previous = m_start;
+	}
+
+	node<t_template>* begin()
 	{
 		if (m_start->m_next != m_end)
 		{
@@ -209,7 +228,7 @@ public:
 		else { return NULL; }
 	}
 
-	node<t_template> end()
+	node<t_template>* end()
 	{
 		return m_end->m_previous;
 	}
