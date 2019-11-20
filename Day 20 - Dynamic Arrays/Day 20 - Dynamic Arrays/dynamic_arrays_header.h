@@ -69,7 +69,7 @@ public:
 			// make a new array with the new current capacity...
 			t_template* m_new_array = new t_template[m_capacity];
 			// copy over the old array's contents to the new array
-			for (int index; index < m_count; ++index)
+			for (int index = 0; index < m_count; ++index)
 			{
 				m_new_array[index] = m_array[index];
 			}
@@ -117,7 +117,7 @@ public:
 			// make a new array with the new current capacity...
 			t_template* m_new_array = new t_template[m_capacity];
 			// copy over the old array's contents to the new array
-			for (int index; index < m_count; ++index)
+			for (int index = 0; index < m_count; ++index)
 			{
 				m_new_array[index] = m_array[index];
 			}
@@ -128,23 +128,39 @@ public:
 		}
 	}
 
+	//Write growToCapacity(int newCap)
+	void growToCapacity(int a_newCap)
+	{
+
+	}
+
 	void insert(const t_template& a_data, size_t a_index)
 	{
 		grow();
 		 
-		for (size_t i = m_count - 1; i >= a_index ; i++)
+		for (size_t i = m_count - 1; i >= a_index ; i--)
 		{
-			m_data[i + 1] = m_data[i];
+			m_array[i + 1] = m_array[i];	//This loop is shifting things out of the way
 		}
 
-		m_data[a_index];
+		m_array[a_index] = a_data;	//This line is copying the new element in
 
 		++m_count; 
 	}
 
+	void insert(const Dynamic_Array<t_template>& a_data, size_t a_index)
+	{
+		//You need a special 'grow' function to grow this sufficiently
+		//growToCapacity(m_capacity + a_data.size())
+
+		//Once you have grown sufficiently, this will look a lot like the other 'insert' function,
+		//but instead of shifting things by 1, we will shift them by a_data.size,
+		//And instead of copying over a single element, we will have to copy all of a_data over, in a loop
+	}
+
 	// overloaded function of insert
 	// 1 or more elements of type t_template
-	void insert(const t_template& a_data[], size_t a_index, size_t& a_element_count)
+	/*void insert(const t_template a_data, size_t a_index, size_t& a_element_count)
 	{
 		grow();
 
@@ -155,11 +171,17 @@ public:
 		    
 		m_data[a_index];
 
-	}
+	}*/
 
-	void remove(const t_template& a_data[], size_t a_index)
+	void remove(size_t a_index)
 	{
-
+		//Starting at a_index, we want to move to the right, copying elements one to the left (ie m_array[i] = m_array[i+1]
+		//Then, decrement the count, and that's it.
+		for (size_t i = a_index; i < m_count - 1; i++)
+		{
+			m_array[i] = m_array[i + 1];
+		}
+		m_count--;
 	}
 
 private:
@@ -167,7 +189,7 @@ private:
 	int m_count;
 	int m_capacity;
 	const int m_default_capacity = 8;
-	int* m_array;
+	t_template* m_array;
 };
 
 #endif
